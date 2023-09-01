@@ -108,7 +108,15 @@ type Author {
   name: String!
   bookCount: Int!
 }
- 
+type Mutation {
+  addBook(
+    title: String!
+    author: String!
+    published: Int!
+    genres: [String!]!
+  ): Book
+}
+
 `
 
 const resolvers = {
@@ -143,6 +151,34 @@ const resolvers = {
         name: author.name,
         bookCount: books.filter((book) => book.author === author.name).length,
       }))
+    },
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const authorName = args.author
+      const existingAuthor = authors.find(
+        (author) => author.name === authorName
+      )
+
+      if (!existingAuthor) {
+        // If the author doesn't exist, create a new author.
+        const newAuthor = {
+          name: authorName,
+          born: null, // Birth year not available.
+        }
+        authors.push(newAuthor)
+      }
+
+      // Create a new book and add it to the books array.
+      const newBook = {
+        title: args.title,
+        author: authorName,
+        published: args.published,
+        genres: args.genres,
+      }
+      books.push(newBook)
+
+      return newBook // Return the newly added book.
     },
   },
 }
