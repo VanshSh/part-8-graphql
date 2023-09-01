@@ -4,6 +4,8 @@
   "description": "",
   "main": "library-backend.js",
   "scripts": {
+    "dev": "nodemon library-backend.js",
+    "start": "node library-backend.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -11,5 +13,8 @@
   "dependencies": {
     "@apollo/server": "^4.9.3",
     "graphql": "^16.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
