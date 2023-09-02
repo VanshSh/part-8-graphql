@@ -90,33 +90,40 @@ let books = [
   you can remove the placeholder query once your first one has been implemented 
 */
 const typeDefs = `
-type Query {
-  bookCount: Int!
-  authorCount: Int!
-  allBooks(author: String, genre: String): [Book!]!
-  allAuthors: [Author!]!
-}
+  type Query {
+    bookCount: Int!
+    authorCount: Int!
+    allBooks(author: String, genre: String): [Book!]!
+    allAuthors: [Author!]!
+  }
 
-type Book {
-  title: String!
-  author: String!
-  published: Int!
-  genres: [String!]!
-}
+  type Mutation {
+    addBook(
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String!]!
+    ): Book
+    editAuthor(name: String!, setBornTo: Int!): Author
+  }
 
-type Author {
-  name: String!
-  bookCount: Int!
-}
-type Mutation {
-  addBook(
+  input AuthorInput {
+    name: String!
+    born: Int
+  }
+
+  type Book {
     title: String!
     author: String!
     published: Int!
     genres: [String!]!
-  ): Book
-}
+  }
 
+  type Author {
+    name: String!
+    born: Int
+    bookCount: Int!
+  }
 `
 
 const resolvers = {
@@ -150,6 +157,7 @@ const resolvers = {
       return authors.map((author) => ({
         name: author.name,
         bookCount: books.filter((book) => book.author === author.name).length,
+        born: author.born,
       }))
     },
   },
@@ -166,7 +174,7 @@ const resolvers = {
           name: authorName,
           born: null, // Birth year not available.
         }
-        authors.push(newAuthor)
+        authors.concat(newAuthor)
       }
 
       // Create a new book and add it to the books array.
@@ -176,7 +184,7 @@ const resolvers = {
         published: args.published,
         genres: args.genres,
       }
-      books.push(newBook)
+      books.concat(newBook)
 
       return newBook // Return the newly added book.
     },
