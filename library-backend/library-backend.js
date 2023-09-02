@@ -89,6 +89,7 @@ let books = [
 /*
   you can remove the placeholder query once your first one has been implemented 
 */
+
 const typeDefs = `
   type Query {
     bookCount: Int!
@@ -174,7 +175,7 @@ const resolvers = {
           name: authorName,
           born: null, // Birth year not available.
         }
-        authors.concat(newAuthor)
+        authors.push(newAuthor)
       }
 
       // Create a new book and add it to the books array.
@@ -184,7 +185,7 @@ const resolvers = {
         published: args.published,
         genres: args.genres,
       }
-      books.concat(newBook)
+      books.push(newBook)
 
       return newBook // Return the newly added book.
     },
