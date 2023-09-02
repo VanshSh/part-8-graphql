@@ -188,6 +188,19 @@ const resolvers = {
 
       return newBook // Return the newly added book.
     },
+    editAuthor: (root, args) => {
+      const authorName = args.name
+      const authorToUpdate = authors.find(
+        (author) => author.name === authorName
+      )
+      if (!authorToUpdate) {
+        return null // If the author is not found, return null.
+      }
+      // Update the author's born year.
+      authorToUpdate.born = args.setBornTo
+
+      return authorToUpdate // Return the edited author.
+    },
   },
 }
 
