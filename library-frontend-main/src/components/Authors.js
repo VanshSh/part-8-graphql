@@ -51,7 +51,7 @@ const Authors = (props) => {
     })
 
     setAuthorDOB('')
-    setAuthorName('')
+    setAuthorName('Select name')
   }
 
   const authors = authorData.data?.allAuthors ?? []
@@ -80,10 +80,22 @@ const Authors = (props) => {
       <form onSubmit={updateAuthorDOB}>
         <div>
           name
-          <input
+          <select
+            name=''
             value={authorName}
             onChange={({ target }) => setAuthorName(target.value)}
-          />
+          >
+            <option key='empty' defaultValue='Select name'>
+              Select name
+            </option>
+            {authors.map(({ name, index }) => {
+              return (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              )
+            })}
+          </select>
         </div>
         <div>
           born
