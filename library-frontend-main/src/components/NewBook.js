@@ -55,7 +55,7 @@ const NewBook = (props) => {
       setErrorMessage(messages)
       setTimeout(() => {
         setErrorMessage(null)
-      }, 10200)
+      }, 5000)
     },
   })
 

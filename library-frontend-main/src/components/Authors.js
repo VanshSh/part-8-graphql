@@ -1,4 +1,5 @@
-import { gql, useQuery } from '@apollo/client'
+import { gql, useMutation, useQuery } from '@apollo/client'
+import { useEffect, useState } from 'react'
 
 const ALL_AUTHORS = gql`
   query {
@@ -9,16 +10,51 @@ const ALL_AUTHORS = gql`
     }
   }
 `
+const EDIT_AUTHOR = gql`
+  mutation editAuthorDOB($name: String!, $setBornTo: Int!) {
+    editAuthor(name: $name, setBornTo: $setBornTo) {
+      name
+      born
+    }
+  }
+`
 const Authors = (props) => {
-  const result = useQuery(ALL_AUTHORS)
+  const [authorName, setAuthorName] = useState('')
+  const [authorDOB, setAuthorDOB] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+
+  const authorData = useQuery(ALL_AUTHORS)
+  const [editAuthorDOB, result] = useMutation(EDIT_AUTHOR, {
+    refetchQueries: [{ query: ALL_AUTHORS }],
+  })
+
+  useEffect(() => {
+    if (result.data && !result.data.editAuthor) {
+      setErrorMessage('author not found')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 2000)
+    }
+  }, [result.data]) // eslint-disable-line
+
   if (!props.show) {
     return null
   }
-  if (result.loading) {
+  if (authorData.loading) {
     return <div>Loading ....</div>
   }
+  const updateAuthorDOB = async (event) => {
+    event.preventDefault()
 
-  const authors = result.data?.allAuthors ?? []
+    editAuthorDOB({
+      variables: { name: authorName, setBornTo: parseInt(authorDOB) },
+    })
+
+    setAuthorDOB('')
+    setAuthorName('')
+  }
+
+  const authors = authorData.data?.allAuthors ?? []
   return (
     <div>
       <h2>authors</h2>
@@ -38,6 +74,26 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+
+      <h2>Set birth year</h2>
+      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
+      <form onSubmit={updateAuthorDOB}>
+        <div>
+          name
+          <input
+            value={authorName}
+            onChange={({ target }) => setAuthorName(target.value)}
+          />
+        </div>
+        <div>
+          born
+          <input
+            value={authorDOB}
+            onChange={({ target }) => setAuthorDOB(target.value)}
+          />
+        </div>
+        <button type='submit'>update author</button>
+      </form>
     </div>
   )
 }
